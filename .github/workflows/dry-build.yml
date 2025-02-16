@@ -1,6 +1,7 @@
 name: Build for iOS Mach-O 64
 
 on:
+  workflow_dispatch: # Enables manual workflow runs from GitHub UI
   pull_request:
     branches:
       - main
@@ -14,15 +15,26 @@ jobs:
       matrix:
         arch: [ arm64 ] # Targeting arm64 for modern iOS 64-bit
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
         with:
           go-version: '1.19.3' # Or your desired Go version
           cache: true
-      - run: go build -o ipatool-ios-macho64-$GOARCH
+
+      - name: Build for iOS Mach-O 64
+        run: go build -o ipatool-ios-macho64-$GOARCH
         env:
           GOOS: ios
           GOARCH: ${{ matrix.arch }}
           CGO_ENABLED: 1 # Explicitly enable CGO if needed for iOS (often required)
-          CGO_CFLAGS: -mios-version-min=13.0 # Set minimum iOS version to 13.0
+          CGO_CFLAGS: -mios-version-min=13.0 # Set minimum iOS version to 13.0 for C compiler
           CGO_LDFLAGS: -mios-version-min=13.0 # Set minimum iOS version for linker
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ipatool-ios-macho64-arm64
+          path: ipatool-ios-macho64-arm64
