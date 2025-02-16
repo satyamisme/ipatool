@@ -34,7 +34,7 @@ jobs:
           CGO_LDFLAGS: -mios-version-min=13.0 # Set minimum iOS version for linker
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 
         with:
           name: ipatool-ios-macho64-arm64
           path: ipatool-ios-macho64-arm64
